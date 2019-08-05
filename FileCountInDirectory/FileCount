@@ -1,0 +1,30 @@
+#countf.sh
+#this file counts the number of files and directories in a path recursively
+#Variables
+declare -i filecount="0"
+declare -i dircount="0"
+
+for i in "$@"; do
+
+if [ -z "$i" ]; then
+       for file in /*
+       do
+	  
+  	  if [ -f $file ] 
+	   then
+	       ((filecount++))
+	   elif [ -d $file ]
+	   then
+	       ((dircount++))
+	   fi
+       done
+echo The number of files is "$filecount"
+echo The number of directories is "$dircount"
+
+elif [ "$i"!="" ]; then
+echo "the number of files in "$i" is: "
+  find $i -type f | wc -l 	
+fi
+done
+
+#echo $?

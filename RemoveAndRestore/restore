@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function restore()
+{
+ 	for i in $*
+       	do
+
+	#check if the file exist
+	file_to_delete=$(ls ~/deleted/$i)
+	if [ ! -f "$file_to_delete" ]
+	then
+		echo "$i is not a file"
+		continue
+	fi
+	
+	#restore the file from the restore.info file
+	filename=$(echo $i | cut -d "_" -f1)
+	
+	restored_filename=$(cat ~/.restore.info | grep "$filename" | cut -d ":" -f2)
+	
+	if [ -f "$restored_filename" ]
+	then
+		read -p "Do you want to overwrite the file? Enter yes/no " overwrite
+		if [ $overwrite = "yes" ]	
+		then
+			echo "$file_to_delete" > $restored_filename
+			return 1
+		elif [ $overwrite = "no" ]
+			mv $file_to_delete $restored_filename
+			return 1
+
+		else
+			return 1
+		fi
+	fi
+	mv $file_to_delete $restored_filename 
+	
+	#remove the restored info from the restore file
+	echo "$(grep -v "$i" ~/.restore.info)" >~/.restore.info
+	#mv ~/restore.info ~/.restore.info
+
+	done
+}
+
+restore $1
